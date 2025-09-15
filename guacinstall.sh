@@ -253,7 +253,7 @@ else
     exit 1
 fi
 
-# Update apt so we can search apt-cache for newest Tomcat version supported & libmariadb-java/libmysql-java
+# Update apt so we can search apt-cache for newest Tomcat version supported & libmariadb-java/libmysql-java.
 echo -e "${BLUE}Updating apt...${NC}"
 apt-get -qq update
 
