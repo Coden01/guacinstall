@@ -15,11 +15,11 @@ fi
 
 # Version number of Guacamole to install
 # Homepage ~ https://guacamole.apache.org/releases/
-GUACVERSION="1.5.5"
+GUACVERSION="1.6.0"
 
 # Latest Version of MySQL Connector/J if manual install is required (if libmariadb-java/libmysql-java is not available via apt)
 # Homepage ~ https://dev.mysql.com/downloads/connector/j/
-MCJVER="8.0.27"
+MCJVER="9.3.0"
 
 # Colors to use for output
 YELLOW='\033[1;33m'
@@ -278,25 +278,66 @@ fi
 # tomcat9 is the latest version
 # tomcat8.0 is end of life, but tomcat8.5 is current
 # fallback is tomcat7
-if [[ $( apt-cache show tomcat9 2> /dev/null | egrep "Version: 9" | wc -l ) -gt 0 ]]; then
-    echo -e "${BLUE}Found tomcat9 package...${NC}"
-    TOMCAT="tomcat9"
-elif [[ $( apt-cache show tomcat8 2> /dev/null | egrep "Version: 8.[5-9]" | wc -l ) -gt 0 ]]; then
-    echo -e "${BLUE}Found tomcat8.5+ package...${NC}"
-    TOMCAT="tomcat8"
-elif [[ $( apt-cache show tomcat7 2> /dev/null | egrep "Version: 7" | wc -l ) -gt 0 ]]; then
-    echo -e "${BLUE}Found tomcat7 package...${NC}"
-    TOMCAT="tomcat7"
-else
-    echo -e "${RED}Failed. Can't find Tomcat package${NC}" 1>&2
-    exit 1
-fi
+#if [[ $( apt-cache show tomcat10 2> /dev/null | egrep "Version: 10" | wc -l ) -gt 0 ]]; then
+#    echo -n "[ " -e "${BLUE}Found tomcat10 package...${NC}" /r
+#    TOMCAT="tomcat10"
+#elif [[ $( apt-cache show tomcat9 2> /dev/null | egrep "Version: 9" | wc -l ) -gt 0 ]]; then
+#    echo -e "${BLUE}Found tomcat9 package...${NC}"
+#    TOMCAT="tomcat9"
+#elif [[ $( apt-cache show tomcat8 2> /dev/null | egrep "Version: 8.[5-9]" | wc -l ) -gt 0 ]]; then
+#    echo -e "${BLUE}Found tomcat8.5+ package...${NC}"
+#    TOMCAT="tomcat8"
+#elif [[ $( apt-cache show tomcat7 2> /dev/null | egrep "Version: 7" | wc -l ) -gt 0 ]]; then
+#    echo -e "${BLUE}Found tomcat7 package...${NC}"
+#    TOMCAT="tomcat7"
+#else
+#    echo -e "${RED}Failed. Can't find Tomcat package${NC}" 1>&2
+#    exit 1
+#fi
 
 # Uncomment to manually force a Tomcat version
-TOMCAT="tomcat9"
+#TOMCAT="tomcat9"
+
+# Check for the more recent versions of Tomcat currently supported by the distro
+if [[ $(apt-cache show tomcat10 2>/dev/null | egrep "Version: 10" | wc -l) -gt 0 ]]; then
+    TOMCAT_VERSION="tomcat10"
+elif [[ $(apt-cache show tomcat9 2>/dev/null | egrep "Version: 9" | wc -l) -gt 0 ]]; then
+    TOMCAT_VERSION="tomcat9"
+else
+    # Default to this version
+    TOMCAT_VERSION="tomcat9"
+fi
+
+# Decide the appropriate FreeRDP package (Debian 13.0 has issues with FreeRDP3) 
+if [[ "${VERSION_CODENAME,,}" == "bookworm" || "${VERSION_CODENAME,,}" == "noble" ]]; then
+    FREERDP="freerdp3-dev"
+fi
+
+# Workaround for Debian incompatibilities with later Tomcat versions. (Adds the oldstable repo and downgrades the Tomcat version)
+if [[ ${ID,,} = "debian" && ${VERSION_CODENAME,,} = *"bookworm"* ]] || [[ ${ID,,} = "debian" && ${VERSION_CODENAME,,} = *"trixie"* ]]; then #(checks for upper and lower case)
+    echo "deb http://deb.debian.org/debian/ bullseye main" | sudo tee /etc/apt/sources.list.d/bullseye.list &> /dev/null
+    sudo apt-get update -qq &> /dev/null
+    TOMCAT_VERSION="tomcat9"
+fi
+
+# Workaround for Ubuntu 23.x Tomcat 10 incompatibilities. Downgrades Tomcat to version 9 which is available from the Lunar repo.
+if [[ ${ID,,} = "ubuntu" ]] && [[ ${VERSION_CODENAME,,} = *"lunar"* ]]; then
+    TOMCAT_VERSION="tomcat9"
+fi
+
+# Workaround for Ubuntu 24.x Tomcat 10 incompatibilities. (Adds old Jammy repo and downgrades the Tomcat version)
+if [[ ${ID,,} = "ubuntu" && ${VERSION_CODENAME,,} = *"noble"* ]]; then
+    echo "deb http://archive.ubuntu.com/ubuntu/ jammy universe" | sudo tee /etc/apt/sources.list.d/jammy.list &> /dev/null
+    sudo apt-get update -qq &> /dev/null
+    TOMCAT_VERSION="tomcat9"
+fi
+
+# Uncomment here to force a specific Tomcat version.
+# TOMCAT_VERSION="tomcat9"
+
 
 # Install features
-echo -e "${BLUE}Installing packages. This might take a few minutes...${NC}"
+echo  -n "[ " -e "${BLUE}Installing packages. This might take a few minutes...${NC}" /r
 
 # Don't prompt during install
 export DEBIAN_FRONTEND=noninteractive
