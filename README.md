@@ -4,21 +4,17 @@
 ![GitHub stars](https://img.shields.io/github/stars/itiligent/Easy-Guacamole-Installer?style=flat-square&color=yellow&labelColor=black)
 ![GitHub forks](https://img.shields.io/github/forks/itiligent/Easy-Guacamole-Installer?style=flat-square&color=blue&labelColor=black)
 
-# 🥑 Easy Guacamole Installer
+#  RAD Installer
 
-
+Instructions and introduction
 
 </div>
 
-<p align="center">
-<a href="https://www.paypal.com/donate/?business=PSZ878JBJDMB8&amount=10&no_recurring=0&item_name=Thankyou+for+your+support+in+maintaining+this+project&currency_code=AUD">
-  <img src="https://github.com/itiligent/Guacamole-Install/raw/main/.github/ISSUE_TEMPLATE/paypal-donate-button.png" width="125" />
-</a>
-</p>
+
 
 ## Introduction
 
-#### v1.6.0 is working. Issues and notes are tracked in https://github.com/itiligent/Easy-Guacamole-Installer/issues/78
+#### v1.5.5 is working. Issues and notes are tracked in https://github.com/itiligent/Easy-Guacamole-Installer/issues/78
 
 This install script automatically sets up a Guacamole jump-host with optional for TLS reverse proxy (self-signed or Let's Encrypt), Active Directory integration, multi-factor authentication, Quick Connect & History Recording Storage UI enhancements. Other options also include a custom UI dark themed template, auto database backups, email alerts and internal hardening options including fail2ban for defence against brute force attacks. There is also faciltiy for enterprise deployments similar to [Amazon's Guacamole Bastion Cluster](http://netcubed-ami.s3-website-us-east-1.amazonaws.com/guaws/v2.3.1/cluster/).
 

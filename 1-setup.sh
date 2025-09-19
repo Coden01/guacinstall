@@ -83,7 +83,7 @@ mkdir -p $DB_BACKUP_DIR
 GITHUB="https://raw.githubusercontent.com/itiligent/Guacamole-Install/main"
 
 # Version of Guacamole to install
-GUAC_VERSION="1.6.0"
+GUAC_VERSION="1.5.5"
 GUAC_SOURCE_LINK="http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUAC_VERSION}"
 
 # MySQL Connector/J version to install
